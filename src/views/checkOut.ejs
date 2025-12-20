@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Checkout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin: 30px 0 15px;
+      font-size: 18px;
+    }
+
+    .notice {
+      background: #fff8e1;
+      border-left: 4px solid #f59e0b;
+      padding: 12px;
+      margin-bottom: 25px;
+      font-size: 14px;
+      color: #92400e;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 25px;
+    }
+
+    table th {
+      background: #f1f5f9;
+      text-align: left;
+      padding: 12px;
+      font-size: 14px;
+    }
+
+    table td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .summary {
+      display: flex;
+      justify-content: flex-end;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .address-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .address-grid input,
+    .address-grid textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid #d1d5db;
+    }
+
+    .address-grid textarea {
+      grid-column: span 2;
+      resize: none;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      align-items: center;
+    }
+
+    .back {
+      text-decoration: none;
+      color: #2563eb;
+      font-size: 14px;
+    }
+
+    button {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1e40af;
+    }
+
+    @media (max-width: 600px) {
+      .address-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary {
+        justify-content: center;
+      }
+
+      .actions {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Checkout</h1>
+
+    <div class="notice">
+      Prices shown below are for preview only. Final amount will be confirmed when you place the order.
+    </div>
+
+    <!-- Cart Items -->
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th class="text-right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach(item => { %>
+          <tr>
+            <td><%= item.productName %></td>
+            <td>₹ <%= item.priceAtPurchase %></td>
+            <td><%= item.quantity %></td>
+            <td class="text-right">₹ <%= item.subTotal %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <div class="summary">
+      Total Amount: ₹ <%= totalAmount %>
+    </div>
+
+    <!-- Shipping Address -->
+    <h2>Shipping Address</h2>
+
+    <form action="/order/create-order" method="POST">
+      <div class="address-grid">
+        <input type="text" name="name" placeholder="Full Name"  required />
+        <input type="text" name="phone" placeholder="Phone Number" pattern="[6-9][0-9]{9}" required />
+
+        <textarea
+          name="address1"
+          rows="3"
+          placeholder="House no, Street, Area"
+          required
+        ></textarea>
+
+        <input type="text" name="city" placeholder="City" required />
+        <input type="text" name="state" placeholder="State" required />
+        <input type="text" name="pincode" placeholder="Pincode" pattern="[0-9]{6}"required />
+      </div>
+
+      <div class="actions">
+        <a href="/cart/items" class="back">← Back to Cart</a>
+        <button type="submit">Place Order</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

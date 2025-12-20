@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Track Order</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .status {
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+
+    .PENDING { background: #fff8e1; color: #92400e; }
+    .PAID { background: #ecfdf5; color: #065f46; }
+    .FAILED { background: #fee2e2; color: #991b1b; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+    }
+
+    .summary {
+      text-align: right;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .address {
+      margin-top: 25px;
+      background: #f8fafc;
+      padding: 15px;
+      border-radius: 6px;
+    }
+
+    .timeline {
+  display: flex;
+  justify-content: space-between;
+  margin: 30px 0;
+  position: relative;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e5e7eb;
+  z-index: 0;
+}
+
+.step {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  width: 100%;
+}
+
+.circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  margin: 0 auto;
+  line-height: 36px;
+  font-weight: bold;
+  color: #6b7280;
+}
+
+.label {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.completed .circle {
+  background: #22c55e;
+  color: white;
+}
+
+.active .circle {
+  background: #2563eb;
+  color: white;
+}
+.flash-msg {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #dcfce7;
+  color: #166534;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  z-index: 999;
+  animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.footer-actions {
+  margin-top: 35px;
+  text-align: center;
+}
+
+.continue {
+  background: #10b981;
+  color: #fff;
+  padding: 12px 26px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.continue:hover {
+  background: #059669;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Order Tracking</h1>
+
+    <p><strong>Order ID:</strong> <%= order._id %></p>
+    <p><strong>Placed On:</strong> <%= order.createdAt.toDateString() %></p>
+
+    <div class="status <%= order.status %>">
+      Status: <%= order.status %>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Qty</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% order.items.forEach(item => { %>
+          <tr>
+            <td><%= item.productName %></td>
+            <td>₹ <%= item.priceAtPurchase %></td>
+            <td><%= item.quantity %></td>
+            <td>₹ <%= item.subTotal %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <div class="summary">
+      Total: ₹ <%= order.totalAmount %>
+    </div>
+
+    <div class="address">
+      <h3>Shipping Address</h3>
+      <p>
+        <%= order.Address.name %><br>
+        <%= order.Address.address1 %><br>
+        <%= order.Address.city %>, <%= order.Address.state %><br>
+        Pincode: <%= order.Address.pincode %><br>
+        Phone: <%= order.Address.phone %>
+      </p>
+    </div>
+
+    <%
+  const steps = ["PAID", "SHIPPED", "DELIVERED"];
+  const currentIndex = steps.indexOf(order.status);
+%>
+
+<div class="timeline">
+  <% steps.forEach((step, index) => { %>
+    <div class="step 
+      <%= index < currentIndex ? "completed" : "" %>
+      <%= index === currentIndex ? "active" : "" %>">
+      
+      <div class="circle">
+        <%= index < currentIndex ? "✓" : index + 1 %>
+      </div>
+
+      <div class="label"><%= step %></div>
+    </div>
+  <% }) %>
+</div>
+
+  </div>
+
+  <div class="footer-actions">
+  <a href="/show/dashboard" class="continue">
+    ← Continue Shopping
+  </a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Product Dashboard</title>
+
+  <style>
+/* =========================
+   GLOBAL RESET
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #eaeded; /* Amazon-like background */
+  color: #111827;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+.navbar {
+  background: linear-gradient(135deg,#0B3D2E);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 28px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+}
+
+/* LEFT SECTION */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #facc15; /* gold */
+  letter-spacing: 0.6px;
+}
+
+/* CART */
+.cart-link {
+  text-decoration: none;
+  font-size: 14px;
+  color: #e5e7eb;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: all 0.2s ease;
+}
+
+.cart-link:hover {
+  background: rgba(250,204,21,0.15);
+  color: #facc15;
+  border-color: #facc15;
+}
+
+/* RIGHT LINKS */
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #d1d5db;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-links a:hover {
+  background: rgba(255,255,255,0.1);
+  color: #ffffff;
+}
+
+/* WELCOME BADGE */
+.welcome {
+  background: rgba(255,255,255,0.12);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #f9fafb;
+}
+
+/* LOGOUT */
+.logout {
+  background: #7c2d12;
+  color: #ffffff !important;
+}
+
+.logout:hover {
+  background: #9a3412;
+}
+
+/* =========================
+   PAGE WRAPPER
+========================= */
+.page {
+  padding: 24px;
+}
+
+/* =========================
+   PRODUCT GRID (4 PER ROW)
+========================= */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 🔥 4 per row */
+  gap: 20px;
+}
+
+/* =========================
+   PRODUCT CARD
+========================= */
+.card {
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+/* PRODUCT IMAGE */
+.card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* PRODUCT INFO */
+.card h3 {
+  font-size: 15px;
+  margin: 10px 0 6px;
+}
+
+.card p {
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+/* PRICE */
+.price {
+  font-size: 16px;
+  font-weight: bold;
+  color: #111827;
+}
+
+/* ADD TO CART BUTTON */
+.card button {
+  margin-top: 12px;
+  background: #facc15;
+  color: #111827;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.card button:hover {
+  background: #fbbf24;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 1024px) {
+  .container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .nav-links {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* =========================
+   SEARCH BAR
+========================= */
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 36px;
+}
+
+.search-bar select {
+  border: none;
+  padding: 0 10px;
+  height: 100%;
+  background: #f3f4f6;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+}
+
+.search-bar input {
+  border: none;
+  padding: 0 10px;
+  width: 220px;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-bar button {
+  border: none;
+  background: #facc15;
+  padding: 0 14px;
+  height: 100%;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.search-bar button:hover {
+  background: #fbbf24;
+}
+
+/* keep nav-left aligned */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.navbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: 14px 30px;
+  background: linear-gradient(135deg, #0f0f0f, #2b1d12);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+}
+
+/* LEFT */
+.nav-left .logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #facc15;
+}
+
+/* CENTER */
+.nav-center {
+  display: flex;
+  justify-content: center;
+}
+
+/* RIGHT */
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+}
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 14px 30px;
+  background: linear-gradient(135deg, #0B3D2E);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  gap: 20px;
+}
+
+/* LEFT */
+.nav-left {
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #facc15;
+}
+
+/* CENTER */
+.nav-center {
+  flex: 1;               /* 🔥 THIS IS KEY */
+  display: flex;
+}
+
+/* SEARCH BAR */
+.search-bar {
+  display: flex;
+  width: 100%;           /* 🔥 fill available space */
+  max-width: 700px;      /* optional (remove if you want full stretch) */
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.search-bar select {
+  border: none;
+  padding: 10px;
+  background: #f3f4f6;
+  font-size: 14px;
+}
+
+.search-bar input {
+  flex: 1;               /* 🔥 input grows */
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-bar button {
+  border: none;
+  background: #facc15;
+  padding: 0 16px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* RIGHT */
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #e5e7eb;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.nav-links a:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.welcome {
+  background: rgba(255,255,255,0.12);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.cart-link {
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.logout {
+  background: #7c2d12;
+  color: #fff !important;
+}
+
+.logout:hover {
+  background: #9a3412;
+}
+
+
+  </style>
+</head>
+
+<body>
+
+  <!-- ✅ NAVIGATION BAR -->
+<nav class="navbar">
+
+  <!-- LEFT -->
+  <div class="nav-left">
+      <div class="logo">🛍 MyShop</div>
+
+    
+  </div>
+
+  <!-- CENTER -->
+  <div class="nav-center">
+    <form action="/show/filter" method="GET" class="search-bar">
+      <select name="category">
+        <option value="">All</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Fashion">Fashion</option>
+         <option value="Clothing">Clothing</option>
+        <option value="Foods">Foods</option>
+
+        <option value="books">Books</option>
+      </select>
+
+      <input
+        type="text"
+        name="search"
+        placeholder="Search products..."
+        value=""
+      />
+
+      <button type="submit">🔍</button>
+    </form>
+  </div>
+
+  <!-- RIGHT -->
+  <ul class="nav-links">
+    <li class="welcome">👋 Welcome Back <%= name %></li>
+    <li><a class="cart-link" href="/cart/items">🛒 Cart</a></li>
+    <li><a href="/order/allOrders">Orders</a></li>
+    <li><a class="logout" href="/logout">Logout</a></li>
+  </ul>
+
+</nav>
+
+  <!-- ✅ PAGE CONTENT -->
+  <div class="page">
+    <h2>Product Dashboard</h2>
+
+    <% if (products.length === 0) { %>
+      <p>No products found</p>
+    <% } %>
+
+    <div class="container">
+      <% products.forEach(product => { %>
+        <div class="card">
+          <img src="<%= product.image %>" alt="Product Image" />
+
+          <h3><%= product.name %></h3>
+          <p>Price: ₹<%= product.price %></p>
+          <p>Category: <%= product.category %></p>
+          <p>Seller: <%= product.seller %></p>
+          <p>Stock: <%= product.stocks %></p>
+              <form action="/cart/add" method="POST">
+         <input type="hidden" name="productId" value="<%= product._id %>">
+         <button type="submit">Add to Cart</button>
+         </form>
+
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+</body>
+</html>

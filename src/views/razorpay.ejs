@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Complete Payment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", Arial, sans-serif;
+      background: linear-gradient(135deg, #eef2ff, #f8fafc);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .payment-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: #2563eb;
+      margin-bottom: 10px;
+    }
+
+    .sub-text {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 25px;
+    }
+
+    .amount-box {
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 25px;
+    }
+
+    .amount-box span {
+      display: block;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .amount-box h2 {
+      margin: 6px 0 0;
+      font-size: 28px;
+      color: #111827;
+    }
+
+    #pay-btn {
+      width: 100%;
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-weight: 600;
+    }
+
+    #pay-btn:hover {
+      background: #1e40af;
+      transform: translateY(-1px);
+    }
+
+    #pay-btn:active {
+      transform: scale(0.98);
+    }
+
+    .secure {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .secure span {
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    @media (max-width: 480px) {
+      .payment-card {
+        margin: 20px;
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="payment-card">
+    <div class="logo">Secure Payment</div>
+    <div class="sub-text">
+      Complete your order by making a secure payment
+    </div>
+
+    <div class="amount-box">
+      <span>Total Amount</span>
+      <h2>₹ <%= amount %></h2>
+    </div>
+      
+
+    <button id="pay-btn">Pay Now</button>
+
+    <div class="secure">
+      🔒 Payments secured by <span>Razorpay</span>
+    </div>
+  </div>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <script>
+    document.getElementById("pay-btn").onclick = function () {
+      const options = {
+        key: "<%= razorpayKey %>",
+        amount: "<%= amount * 100 %>",
+        currency: "INR",
+        order_id: "<%= razorpayOrderId %>",
+
+        handler: function (response) {
+          fetch("/order/payment/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: "<%= orderId %>"
+            })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              setTimeout(() => {
+                window.location.href = `/order/order-items/${data.orderId}`;
+              }, 0);
+            }
+          })
+          .catch(err => {
+            console.error("Payment verification failed:", err);
+            window.location.href = `/order/allOrders`;
+
+          });
+        },
+     modal: {
+      ondismiss: function () {
+        // ❌ User closed payment
+        window.location.href = "/order/allOrders";
+      }
+    }
+
+
+      };
+   
+  const rzp= new Razorpay(options);
+
+    rzp.on("payment.failed", function () {
+    window.location.href = "/order/allOrders";
+  });
+
+  rzp.open();
+
+    };
+  </script>
+</body>
+</html>

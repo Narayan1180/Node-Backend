@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eaeaea;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .status {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .PENDING { background: #fff4cc; color: #a67c00; }
+    .PAID { background: #e6f6ec; color: #1e7f44; }
+    .FAILED { background: #fdecea; color: #b42318; }
+
+    .order-info {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .info-box {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .info-box span {
+      display: block;
+      color: #6b7280;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .info-box strong {
+      font-size: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+
+    table th {
+      background: #f1f5f9;
+      text-align: left;
+      padding: 12px;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    table td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .total {
+      display: flex;
+      justify-content: flex-end;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      .order-info {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .flash-msg {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #dcfce7;
+  color: #166534;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  z-index: 999;
+  animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.footer-actions {
+  margin-top: 35px;
+  text-align: center;
+}
+
+.continue {
+  background: #10b981;
+  color: #fff;
+  padding: 12px 26px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.continue:hover {
+  background: #059669;
+}
+.pay {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+  background: linear-gradient(135deg, #007ACC,#007ACC);
+
+  color: #ffffff;
+  font-weight: 600;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.4);
+  transition: all 0.2s ease-in-out;
+}
+
+.pay:hover {
+  background: linear-gradient(135deg, #15803d, #166534);
+    background: linear-gradient(135deg, #007ACC, #1e3a8a);
+
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(22, 163, 74, 0.5);
+}
+
+.pay:active {
+  transform: scale(0.96);
+}
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Order Details</h1>
+      <span class="status <%= order.status %>"><%= order.status %></span>
+
+      <% if (order.status === "PENDING") { %>
+  <form action="/order/pay/<%= order._id %>" method="GET">
+    <button class="btn pay" >Pay Now</button>
+  </form>
+<% } %>
+
+    </div>
+
+    <div class="order-info">
+      <div class="info-box">
+        <span>Order ID</span>
+        <strong><%= order._id %></strong>
+      </div>
+
+      <div class="info-box">
+        <span>Order Date</span>
+        <strong><%= order.createdAt.toDateString() %></strong>
+      </div>
+
+      <div class="info-box">
+        <span>Total Items</span>
+        <strong><%= order.items.length %></strong>
+      </div>
+
+      <div class="info-box">
+        <span>Total Amount</span>
+        <strong>₹ <%= order.totalAmount %></strong>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th class="text-right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% order.items.forEach(item => { %>
+          <tr>
+            <td><%= item.productName %></td>
+            <td>₹ <%= item.priceAtPurchase %></td>
+            <td><%= item.quantity %></td>
+            <td class="text-right">₹ <%= item.subTotal %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <div class="total">
+      Grand Total: ₹ <%= order.totalAmount %>
+    </div>
+   <% if (order.status === "PAID") { %>
+  <div class="success-box">
+    ✅ Payment successful!  
+    Your order has been placed.
+  </div>
+
+  <a href="/order/track/<%= order._id %>" class="btn">
+    Track your order
+  </a>
+<% } %>
+
+    <div class="footer">
+      Thank you for shopping with us 🙏
+    </div>
+  </div>
+
+  <div class="footer-actions">
+  <a href="/show/dashboard" class="continue">
+    ← Continue Shopping
+  </a>
+
+</body>
+</html>

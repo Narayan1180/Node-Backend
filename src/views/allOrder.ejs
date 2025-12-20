@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Orders</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .order {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .order-info {
+      font-size: 14px;
+    }
+
+    .order-info p {
+      margin: 4px 0;
+    }
+
+    .status {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .PAID { background: #dcfce7; color: #166534; }
+    .PENDING { background: #fef9c3; color: #854d0e; }
+    .FAILED { background: #fee2e2; color: #991b1b; }
+    .CANCELLED { background: #e5e7eb; color: #374151; }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+    }
+
+    .view {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .cancel {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .cancel:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+      .flash-msg {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #dcfce7;
+  color: #166534;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  z-index: 999;
+  animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.footer-actions {
+  margin-top: 35px;
+  text-align: center;
+}
+
+.continue {
+  background: #10b981;
+  color: #fff;
+  padding: 12px 26px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.continue:hover {
+  background: #059669;
+}
+
+
+  </style>
+</head>
+
+<body>
+  <% if (success_msg) { %>
+  <div class="flash-msg">
+    <%= success_msg %>
+  </div>
+<% } %>
+
+  <div class="container">
+    <h1>My Orders</h1>
+    
+    <% orders.forEach(order => { %>
+      <div class="order">
+        <div class="order-info">
+          <p><strong>Order ID:</strong> <%= order._id %></p>
+          <p><strong>Amount:</strong> ₹ <%= order.totalAmount %></p>
+          <p>
+            <strong>Status:</strong>
+            <span class="status <%= order.status %>">
+              <%= order.status %>
+            </span>
+          </p>
+        </div>
+        
+        <div class="actions">
+          <a class="btn view" href="/order/order-items/<%= order._id %>">
+            View
+          </a>
+
+          <% if (order.status === "PENDING" || order.status === "PAID") { %>
+            
+            <form action="/order/cancel/<%= order._id %>" method="POST">
+              <button class="btn cancel" type="submit">
+                Cancel
+              </button>
+            </form>
+          <% } else { %>
+            <button class="btn cancel" disabled>
+              Cancelled
+            </button>
+          <% } %>
+        </div>
+
+        
+      </div>
+    <% }) %>
+
+  </div>
+<div class="footer-actions">
+  <a href="/show/dashboard" class="continue">
+    ← Continue Shopping
+  </a>
+</div>
+
+</body>
+</html>

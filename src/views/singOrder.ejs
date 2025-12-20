@@ -1,0 +1,13 @@
+<h1>Order Details</h1>
+<p>Order ID: <%= order._id %></p>
+<p>User: <%= order.user.name %> (<%= order.user.email %>)</p>
+<p>Status: <%= order.status %></p>
+<h3>Items:</h3>
+<ul>
+  <% order.items.forEach(item => { %>
+    <li>
+      <%= item.productName %> - ₹<%= item.priceAtPurchase %> x <%= item.quantity %> = ₹<%= item.subTotal %>
+    </li>
+  <% }) %>
+</ul>
+<p>Total Amount: ₹<%= order.totalAmount %></p>
