@@ -20,7 +20,7 @@ import cookieParser from "cookie-parser"
 import orderRouter from "./routes/order.route.js"
 import cartRouter from "./routes/cart.route.js";
 
-import { connectRedis } from "./config/redis.js";
+//import { connectRedis } from "./config/redis.js";
 
 const app=express()
 
