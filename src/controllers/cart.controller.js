@@ -64,6 +64,12 @@ export const showCartItems= async(req,res)=>{
     }
 
     const cartItems = await Cart.find({"user":req.user.id}).populate("items.product")//find returns array
+    console.log(cartItems)
+    if (cartItems.length==0){
+        req.flash("error_msg", "User don,t have items in cart please add to create it.");
+
+        return res.redirect("/show/dashboard")
+    }
     cartItems[0].items.forEach( item=>{
         console.log("your tem:",item)
     })

@@ -125,10 +125,48 @@
 .continue:hover {
   background: #059669;
 }
+      .flash-msg {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #dcfce7;
+  color: #166534;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  z-index: 999;
+  animation: fadeOut 3s forwards;
+}
+
+.footer-actions {
+  margin-top: 35px;
+  text-align: center;
+}
+
+.continue {
+  background: #10b981;
+  color: #fff;
+  padding: 12px 26px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.continue:hover {
+  background: #059669;
+}
 
   </style>
 </head>
 <body>
+   <% if (success_msg) { %>
+  <div class="flash-msg">
+    <%= success_msg %>
+  </div>
+<% } %>
 
   <div class="container">
     <h1>🛒 Your Shopping Cart</h1>
@@ -188,6 +226,11 @@
 
     <% } %>
   </div>
+  <div class="footer-actions">
+  <a href="/show/dashboard" class="continue">
+    ← Continue Shopping
+  </a>
+</div>
 
 
 </body>
