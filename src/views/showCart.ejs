@@ -144,6 +144,11 @@
   margin-top: 35px;
   text-align: center;
 }
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
 
 .continue {
   background: #10b981;
@@ -162,9 +167,14 @@
   </style>
 </head>
 <body>
-   <% if (success_msg) { %>
+   <% if (success_msg && success_msg.length>0) { %>
   <div class="flash-msg">
     <%= success_msg %>
+  </div>
+<% } %>
+   <% if (error_msg && error_msg.length>0) { %>
+  <div class="flash-msg">
+    <%= error_msg %>
   </div>
 <% } %>
 
