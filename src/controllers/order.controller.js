@@ -43,6 +43,7 @@ export const  CheckOutPage = async(req,res)=>{
 export const CreateOrder = async (req,res)=>{
 
 
+
  console.log("hello user u r inside order::",req.body)
 try {
         const cartItem= await Cart.find({"user":req.user.id}).populate("items.product");

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #f9f9ff);
+    }
+
+    .card {
+      width: 100%;
+      max-width: 380px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #222;
+    }
+
+    label {
+      font-size: 14px;
+      color: #555;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0 18px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4A90E2;
+      box-shadow: 0 0 0 2px rgba(74,144,226,0.15);
+    }
+
+    button {
+      width: 100%;
+      background: #4A90E2;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #3b7fd8;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 14px;
+    }
+
+    .links a {
+      color: #4A90E2;
+      text-decoration: none;
+      margin: 0 6px;
+    }
+
+    /* Flash messages */
+    .flash-msg {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+      z-index: 999;
+      animation: fadeOut 4s forwards;
+    }
+
+    .success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <% if (success_msg && success_msg.length>0) { %>
+    <div class="flash-msg success"><%= success_msg %></div>
+  <% } %>
+
+  <% if (error_msg && error_msg.length>0) { %>
+    <div class="flash-msg error"><%= error_msg %></div>
+  <% } %>
+
+  <div class="card">
+    <h2>Welcome Back</h2>
+
+    <form action="/login" method="POST">
+      <label>Email Address</label>
+      <input type="email" name="email" placeholder="example@mail.com" required>
+
+      <label>Password</label>
+      <input type="password" name="password" placeholder="********" required>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="links">
+      <a href="/register">Register</a> |
+      <a href="/forget-password">Forgot Password?</a>
+    </div>
+  </div>
+
+</body>
+</html>

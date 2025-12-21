@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Product</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 25px;
+      width: 360px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Create Product</h2>
+
+    <form action="/show/product-create" method="POST" enctype="multipart/form-data">
+
+      <!-- Product Name -->
+      <div class="form-group">
+        <label>Product Name</label>
+        <input type="text" name="name" required>
+      </div>
+
+      <!-- Product Image -->
+      <div class="form-group">
+        <label>Product Image</label>
+        <input type="file" name="image" accept="image/*" required>
+      </div>
+
+      <!-- Price -->
+      <div class="form-group">
+        <label>Price</label>
+        <input type="number" name="price" required>
+      </div>
+
+      <!-- Category (ENUM MATCHED) -->
+      <div class="form-group">
+        <label>Category</label>
+        <select name="category" required>
+          <option value="">Select Category</option>
+          <option value="Electonics">Electonics</option>
+          <option value="Clothing">Clothing</option>
+          <option value="Foods">Foods</option>
+          <option value="Fashion">Fashion</option>
+          <option value="Books">Books</option>
+
+
+        </select>
+      </div>
+
+      <!-- Seller -->
+      <div class="form-group">
+        <label>Seller</label>
+        <input type="text" name="seller" required>
+      </div>
+
+      <!-- Stock -->
+      <div class="form-group">
+        <label>Stock</label>
+        <input type="number" name="stock" required>
+      </div>
+
+      <button type="submit">Add Product</button>
+
+    </form>
+  </div>
+
+</body>
+</html>

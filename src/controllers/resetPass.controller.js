@@ -7,7 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const showForgetPassword= (req,res)=>{
-    return res.sendFile(path.join(__dirname,"../public","forgetPassword.html"))
+    //return res.sendFile(path.join(__dirname,"../public","forgetPassword.html"))
+    res.render("forgetPassword.ejs")
 }
 
 export const showResetPassword= (req,res)=>{
@@ -72,7 +73,7 @@ export const resetPassword = async(req,res)=>{
     
         await user.save({validateBeforeSave:false})
     
-        return res.status(200).json({message:"password changed successFully"})
+        return res.status(200).redirect("/login")
     
     } catch (error) {
 

@@ -18,7 +18,8 @@ export const  registerPage =(req,res)=>{
 }
 
 export const  loginPage =(req,res)=>{
-   return res.sendFile(path.join(__dirname,"../public","login.html"))
+  res.render("login.ejs")
+  //return res.sendFile(path.join(__dirname,"../public","login.html"))
 
 }
 
@@ -27,13 +28,17 @@ export const registerController =  async (req,res)=>{
     try {
         const {name,email,password}=req.body
         console.log(name,email,password)
-        if (!validator.isEmail(email))
-            return res.status(400).json("please enter valid email")
+        if (!validator.isEmail(email)){
+            req.flash("error_msg","Please Enter Valid Email Address.")
+
+            return res.status(400).redirect("/register")}
     
         const check = await User.findOne({email})
         console.log(check)
-        if (check)
-            return res.status(400).json({"message":"User Already registered"})
+        if (check){
+            req.flash("error_msg","User already registered Please logIn!.")
+
+            return res.status(400).redirect("/login")}
 
         //const hash_password= await bcrypt.hash(password,10)
 
@@ -41,8 +46,8 @@ export const registerController =  async (req,res)=>{
     
         await user.save()
         
-    
-        return res.status(200).json({message:"User registered successFully"})
+        req.flash("success_msg","User Registered Successfully.")
+        return res.status(200).redirect("/login")
        } 
 
 catch (error) {
@@ -68,15 +73,19 @@ export const loginController = async (req, res) => {
     const user = await User.findOne({ email });
     console.log("User found:", user);
 
-    if (!user)
-      return res.status(400).json({ message: "Please Register" });
+    if (!user){
+      req.flash("error_msg","Please Enter Valid Email Address Or Register.")
+
+      return res.status(400).redirect("/login");}
 
     const match =  await user.comparePassword(password,user.password);
     //console.log( await bcrypt.hash("12345",10))
     console.log("Password match:", match,password,user.password);
 
-    if (!match)
-      return res.status(400).json({ message: "Incorrect Password" });
+    if (!match){
+      req.flash("error_msg","Wrong Password.")
+
+      return res.status(400).redirect("/login");}
 
     // Generate tokens
     const accessTokenValue = await accessToken(user._id);
@@ -109,6 +118,8 @@ export const loginController = async (req, res) => {
 
    //const products= await Product.find({})
    console.log(user.name)
+  req.flash("success_msg","User logged in Successfully.")
+
    return res.redirect("/show/dashboard")
   } catch (error) {
     console.error(error);
