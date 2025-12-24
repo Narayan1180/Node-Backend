@@ -4,6 +4,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { cloudinaryUploader } from "../utils/cloudinary.util.js";
 import { authMiddlware } from "../middlewares/auth.middleware.js";
+import Cart from "../models/cart.model.js";
+import fs from "fs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -21,7 +23,8 @@ export const createProduct= async(req,res)=>{
     console.log(req.body,req.file)
     const result= await cloudinaryUploader(filePath)
     console.log(result)
-    
+    fs.unlinkSync(filePath);
+
     const product=new Product({name,image:result.secure_url,price,category,seller,stocks:stock});
     await product.save()
     return res.status(200).json({message:"image successfully uploaded to the cloud"})
@@ -39,7 +42,14 @@ export const createProduct= async(req,res)=>{
 export const showDashBoard = async(req,res)=>{
 
     const products= await Product.find({});
-
+   // const user= await Cart.findOne({"user":req.user.id})
+    //console.log(user,user.items.length)
+   // console.log(req.session)
+    //let cartCount=0;
+  //  if (user){
+    // cartCount=user.items.reduce((total,i)=>total+i.quantity,0)
+   // }
+    
     return res.render("dashboard.ejs",{products,name:req.user.name})
 }
 

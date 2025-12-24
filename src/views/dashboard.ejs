@@ -470,7 +470,8 @@ body {
   <!-- RIGHT -->
   <ul class="nav-links">
     <li class="welcome">👋 Welcome Back <%= name %></li>
-    <li><a class="cart-link" href="/cart/items">🛒 Cart</a></li>
+    <li><a class="cart-link" href="/cart/items">🛒 Cart     <span id="cart-count">0</span>
+</a></li>
     <li><a href="/order/allOrders">Orders</a></li>
     <li><a class="logout" href="/logout">Logout</a></li>
   </ul>
@@ -495,15 +496,51 @@ body {
           <p>Category: <%= product.category %></p>
           <p>Seller: <%= product.seller %></p>
           <p>Stock: <%= product.stocks %></p>
-              <form action="/cart/add" method="POST">
-         <input type="hidden" name="productId" value="<%= product._id %>">
-         <button type="submit">Add to Cart</button>
-         </form>
+           <button type="button" onclick="addToCart('<%= product._id %>')">
+  Add to Cart
+</button>
+
+<script>
+  async function addToCart(productId) {
+    const res = await fetch('/cart/add/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId })
+    });
+      if (!res.ok) return;
+
+  const data = await res.json();
+
+   console.log(data);
+ if (data.message==="success"){
+ document.getElementById('cart-count').innerText = data.cartCount;
+
+    }
+  }
+</script>
 
         </div>
       <% }) %>
     </div>
   </div>
+
+
+  <script>
+async function loadCartCount() {
+  try {
+    const res = await fetch('/cart/count'); // your backend route
+    const data = await res.json();
+    const countEl = document.getElementById('cart-count');
+    if (countEl) {
+      countEl.innerText = data.cartCount;
+    }
+  } catch (err) {
+    console.error('Failed to load cart count', err);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', loadCartCount);
+</script>
 
 </body>
 </html>

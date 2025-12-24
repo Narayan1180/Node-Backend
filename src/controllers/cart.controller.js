@@ -24,7 +24,8 @@ export const addToCart = async(req,res)=>{
     if (!cart_user){
            const cartItem= new Cart({user:user._id,items:[{"product":product._id,"quantity":1}]})
            await cartItem.save()
-           return res.status(200).redirect("/show/dashboard")
+           return     res.status(200).json({message:"success",cartCount:1})
+
 
 
 
@@ -48,7 +49,11 @@ export const addToCart = async(req,res)=>{
     console.log("Items Successfully added to the Cart")
     const redirectUrl = req.headers.referer || "/show/dashboard";
     console.log(redirectUrl)
-    res.status(200).redirect(redirectUrl)
+    req.flash("success_msg","items added to the cart")
+    res.status(200).json({message:"success",cartCount:cart_user.items.length})
+     console.log(cart_user.items.length)
+      
+
 
     
 }
@@ -98,16 +103,22 @@ export const cartUpdate = async(req,res)=>{
                    user_cart.items[findIndexOfproductId].quantity+=1
 
         }
-        if (req.body.action==="decrease" & user_cart.items[findIndexOfproductId].quantity>0){
+        if (req.body.action==="decrease" && user_cart.items[findIndexOfproductId].quantity>0){
             user_cart.items[findIndexOfproductId].quantity-=1
 
         }}
 
+               await user_cart.save()
 
-
+     const product=user_cart.items[findIndexOfproductId]
+     const total=product.product.price*product.quantity
+     const grandTotal=  user_cart.items.reduce((sum,item)=>sum+item.product.price*item.quantity,0)
+     
+     console.log(total,grandTotal,user_cart.items[findIndexOfproductId])
 
         
-     await user_cart.save()
+     return res.json({ success: true, cartCount:0, itemQty: user_cart.items[findIndexOfproductId].quantity,total:total,grandTotal:grandTotal
+ });
 
      return res.redirect("/cart/items")
 
@@ -130,6 +141,24 @@ export const removeCart = async(req,res)=>{
 
     return res.redirect("/cart/items")
 
+
+}
+
+export const count_cart= async(req,res)=>{
+try {
+    
+        const user = await Cart.findOne({"user":req.user.id})
+        let cartCount=0
+        if (user){
+            cartCount= user.items.length
+        }
+    
+        res.json({cartCount:cartCount})
+} catch (error) {
+    console.error(error)
+    res.status(500).json({cartCount:0})
+    
+}
 
 }
 

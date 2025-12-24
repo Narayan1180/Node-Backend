@@ -207,15 +207,20 @@
           <div class="price">₹<%= item.product.price %></div>
 
           <div class="qty">
-            <form action="/cart/update" method="POST">
+            <form   class="cart-update-form">
               <input type="hidden" name="productId" value="<%= item.product._id %>" />
-              <button name="action" value="decrease">−</button>
-              <span><%= item.quantity %></span>
-              <button name="action" value="increase">+</button>
+              <button type= "button" name="action" value="decrease">−</button>
+              <span class="item-qty"><%= item.quantity %></span>
+              <button type="button"name="action" value="increase">+</button>
             </form>
+
+           
           </div>
 
-          <div class="total">₹<%= itemTotal %></div>
+          
+          <div class="total">₹<span class="item-total"><%= itemTotal %></span></div>
+
+
         </div>
        
         <form action="/cart/remove" method="POST" style="text-align:right; margin-bottom:10px;">
@@ -225,7 +230,8 @@
       <% }) %>
 
       <div class="summary">
-        <h2>Total: ₹<%= grandTotal %></h2>
+          Total: ₹<span id="grand-total"><%= grandTotal %></span>
+
         <form action="/order/check-out" method="GET">
   <button type="submit" class="continue">
     Proceed to Checkout →
@@ -241,7 +247,42 @@
     ← Continue Shopping
   </a>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.cart-update-form').forEach(form => {
 
+    form.querySelectorAll('button[name="action"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+
+        const productId = form.querySelector('input[name="productId"]').value;
+        const action = btn.value;
+
+        const qtySpan = form.querySelector('.item-qty');
+        const itemTotalSpan = form.closest('.cart-item')?.querySelector('.item-total');
+
+        const res = await fetch('/cart/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId, action })
+        });
+
+        const data = await res.json();
+        if (!data.success) return;
+
+        // ✅ update only THIS product
+        qtySpan.innerText = data.itemQty;
+        if (itemTotalSpan) itemTotalSpan.innerText = data.total;
+
+        // ✅ update grand total
+        document.getElementById('grand-total').innerText = data.grandTotal;
+                //document.getElementByClass('total').innerText = data.total;
+
+
+      });
+    });
+  });
+});
+</script>
 
 </body>
 </html>
