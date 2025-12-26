@@ -19,7 +19,8 @@ import productRouter from "./routes/route.product.js"
 import cookieParser from "cookie-parser"
 import orderRouter from "./routes/order.route.js"
 import cartRouter from "./routes/cart.route.js";
-
+import { refreshToken, verifyRefreshToken ,accessToken} from "./utils/utl.loginToken.js";
+import User from "./models/User.models.js";
 //import { connectRedis } from "./config/redis.js";
 
 const app=express()
@@ -65,7 +66,34 @@ app.use("/cart",cartRouter)
 app.use("/order",orderRouter)
 
 
-app.get("/", (req, res) => {
+app.get("/", async(req, res) => {
+  //console.log(req.cookies,req.cookies.refreshToken)
+
+  const user =verifyRefreshToken(req.cookies.refreshToken)
+  console.log(user)
+
+  if(!user){
+    return res.redirect("/login")
+  }
+  const userExist = await User.findOne({refreshToken:req.cookies.refreshToken})
+
+  if (!userExist){
+    console.log("inside not user exist")
+    return res.redirect("/login")
+  }
+  const CookieOption = { httpOnly: true,
+      sameSite: process.env.NODE_ENV==="production"?"strict":"lax",
+      secure: process.env.NODE_ENV==="production",
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 1 day
+    }
+  const new_accessToken=accessToken(user.id)
+  res.cookie("accessToken",new_accessToken,CookieOption)
+
+
+  return res.redirect("/show/dashboard")
+
+
+
   res.redirect("/login");
 });
 

@@ -57,11 +57,7 @@ catch (error) {
 
 }
 
-const CookieOption = { httpOnly: true,
-      sameSite: process.env.NODE_ENV==="production"?"strict":"lax",
-      secure: process.env.NODE_ENV==="production",
-      maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
-    }
+
 
 export const loginController = async (req, res) => {
   try {
@@ -94,6 +90,11 @@ export const loginController = async (req, res) => {
     // Save refresh token
     user.refreshToken = refreshTokenValue;
     await user.save();
+    const CookieOption = { httpOnly: true,
+      sameSite: process.env.NODE_ENV==="production"?"strict":"lax",
+      secure: process.env.NODE_ENV==="production",
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 1 day
+    }
 
     res.cookie("refreshToken", refreshTokenValue, {CookieOption})
     res.cookie("accessToken", accessTokenValue, {CookieOption}
@@ -168,13 +169,17 @@ export const refresh = async(req,res)=>{
   console.log(user)
   const new_accessToken = accessToken(user._id)
   const new_refreshToken=refreshToken(user._id,token_v+1)
-
+  const CookieOption = { httpOnly: true,
+      sameSite: process.env.NODE_ENV==="production"?"strict":"lax",
+      secure: process.env.NODE_ENV==="production",
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 1 day
+    }
   user.refreshToken =new_refreshToken
   user.tokenVersion=token_v+1
   await user.save()
   res.cookie("refreshToken",new_refreshToken,CookieOption)
-
-  res.json({"acccessToken":new_accessToken})
+  res.cookie("accessToken",new_accessToken,CookieOption)
+  res.json({"accessToken":new_accessToken})
 
 }
 catch(error){
@@ -183,7 +188,12 @@ catch(error){
 }
 
 }
-
+const CookieOption = { httpOnly: true,
+      sameSite: process.env.NODE_ENV==="production"?"strict":"lax",
+      secure: process.env.NODE_ENV==="production",
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 1 day
+    }
+  
 
 export const logout = async(req,res)=>{
  
@@ -218,6 +228,7 @@ export const logout = async(req,res)=>{
 
     
   } catch (error) {
+      console.error(error)
       res.status(400).json({message:"logout failed"})
   }
 
