@@ -60,11 +60,6 @@ app.set("view engine", "ejs");
 app.use(cookieParser())
 app.use(express.json());
 
-app.use("/",authRouter)
-app.use("/show",productRouter)
-app.use("/cart",cartRouter)
-app.use("/order",orderRouter)
-
 
 app.get("/", async(req, res) => {
   console.log(req.cookies,req.cookies.refreshToken)
@@ -96,6 +91,12 @@ app.get("/", async(req, res) => {
 
   res.redirect("/login");
 });
+
+
+app.use("/",authRouter)
+app.use("/show",productRouter)
+app.use("/cart",cartRouter)
+app.use("/order",orderRouter)
 
 const port=process.env.PORT
 
