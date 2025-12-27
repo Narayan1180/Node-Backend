@@ -23,11 +23,22 @@ export const  loginPage =(req,res)=>{
 
 }
 
-
+ const CookieOption1 = { httpOnly: true,
+      sameSite: process.env.NODE_ENV==="production"?"lax":"lax",
+      secure: process.env.NODE_ENV==="production",
+      maxAge: 15*60*1000, // 1 day
+    }
+  
+  const CookieOption2 = { httpOnly: true,
+      sameSite: process.env.NODE_ENV==="production"?"lax":"lax",
+      secure: process.env.NODE_ENV==="production",
+      maxAge: 15*24*60*60*1000, // 1 day
+    }
+ 
 export const registerController =  async (req,res)=>{
     try {
         const {name,email,password}=req.body
-        console.log(name,email,password)
+     //   console.log(name,email,password)
         if (!validator.isEmail(email)){
             req.flash("error_msg","Please Enter Valid Email Address.")
 
@@ -67,7 +78,7 @@ export const loginController = async (req, res) => {
     password = password.trim();
 
     const user = await User.findOne({ email });
-    console.log("User found:", user);
+  //  console.log("User found:", user);
 
     if (!user){
       req.flash("error_msg","Please Enter Valid Email Address Or Register.")
@@ -76,7 +87,7 @@ export const loginController = async (req, res) => {
 
     const match =  await user.comparePassword(password,user.password);
     //console.log( await bcrypt.hash("12345",10))
-    console.log("Password match:", match,password,user.password);
+   // console.log("Password match:", match,password,user.password);
 
     if (!match){
       req.flash("error_msg","Wrong Password.")
@@ -90,14 +101,9 @@ export const loginController = async (req, res) => {
     // Save refresh token
     user.refreshToken = refreshTokenValue;
     await user.save();
-    const CookieOption = { httpOnly: true,
-      sameSite: process.env.NODE_ENV==="production"?"strict":"lax",
-      secure: process.env.NODE_ENV==="production",
-      maxAge: 15 * 24 * 60 * 60 * 1000, // 1 day
-    }
-
-    res.cookie("refreshToken", refreshTokenValue, {CookieOption})
-    res.cookie("accessToken", accessTokenValue, {CookieOption}
+   
+    res.cookie("refreshToken", refreshTokenValue, CookieOption2)
+    res.cookie("accessToken", accessTokenValue, CookieOption1
 );
     /*let result= await file_upload.find({})
     console.log(result)
@@ -148,15 +154,15 @@ export const refresh = async(req,res)=>{
             payload=  verifyRefreshToken(token)
 
   } catch (error) {
-    console.log("err",error)
+    //console.log("err",error)
     return res.status(401).json({message:"Invalid or expired refreshToken"})
   } 
-  console.log(payload)
+  //console.log(payload)
   const user_id = payload.id
   const token_v=payload.v
-  console.log(user_id,token_v)
+  //console.log(user_id,token_v)
   const user= await User.findById(user_id)
-  console.log(token_v,user.tokenVersion,payload)
+  //console.log(token_v,user.tokenVersion,payload)
   if (!user)
   {
     return res.status(401).json({message:"User not found"})}
@@ -169,16 +175,11 @@ export const refresh = async(req,res)=>{
   console.log(user)
   const new_accessToken = accessToken(user._id)
   const new_refreshToken=refreshToken(user._id,token_v+1)
-  const CookieOption = { httpOnly: true,
-      sameSite: process.env.NODE_ENV==="production"?"strict":"lax",
-      secure: process.env.NODE_ENV==="production",
-      maxAge: 15 * 24 * 60 * 60 * 1000, // 1 day
-    }
   user.refreshToken =new_refreshToken
   user.tokenVersion=token_v+1
   await user.save()
-  res.cookie("refreshToken",new_refreshToken,CookieOption)
-  res.cookie("accessToken",new_accessToken,CookieOption)
+  res.cookie("refreshToken",new_refreshToken,CookieOption2)
+  res.cookie("accessToken",new_accessToken,CookieOption1)
   res.json({"accessToken":new_accessToken})
 
 }
@@ -189,7 +190,7 @@ catch(error){
 
 }
 const CookieOption = { httpOnly: true,
-      sameSite: process.env.NODE_ENV==="production"?"strict":"lax",
+      sameSite: process.env.NODE_ENV==="production"?"lax":"lax",
       secure: process.env.NODE_ENV==="production",
       maxAge: 15 * 24 * 60 * 60 * 1000, // 1 day
     }

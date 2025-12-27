@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (itemTotalSpan) itemTotalSpan.innerText = data.total;
 
         // ✅ update grand total
-        document.getElementById('grand-total').innerText = data.grandTotal;
+        document.getElementById('grand-total').innerText = `Total:₹ `+data.grandTotal;
                 //document.getElementByClass('total').innerText = data.total;
 
 

@@ -21,7 +21,7 @@ export const  CheckOutPage = async(req,res)=>{
         "subTotal":item.product.price*item.quantity
 
     }))
-    console.log(orderItems)
+   // console.log(orderItems)
     const totalAmount=orderItems.reduce((sum,i)=>sum+i.subTotal,0);
 
 
@@ -44,7 +44,7 @@ export const CreateOrder = async (req,res)=>{
 
 
 
- console.log("hello user u r inside order::",req.body)
+ //console.log("hello user u r inside order::",req.body)
 try {
         const cartItem= await Cart.find({"user":req.user.id}).populate("items.product");
     
@@ -203,7 +203,7 @@ export const trackOrder = async (req, res) => {
   const order = await Order.findById(orderId)
     .populate("items.product")
     .populate("user", "email");
-  console.log("insidde:",order)
+  //console.log("insidde:",order)
   if (!order) {
     return res.status(404).render("error", {
       message: "Order not found"
@@ -259,7 +259,7 @@ export const getAllOrders = async (req, res, next) => {
 
 export const cancellOrder = async(req,res)=>{
 
-    console.log("hii ",req.params,req.body)
+   // console.log("hii ",req.params,req.body)
 
 
     const yourOrder= await Order.findById({"_id":req.params.id})

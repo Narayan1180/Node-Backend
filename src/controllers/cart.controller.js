@@ -16,8 +16,8 @@ export const addToCart = async(req,res)=>{
         return res.satus(401).redirect("/show/dashboard")
 
     }
-    console.log(user,product)
-    console.log(user._id,product._id,req.body.productId)
+   // console.log(user,product)
+   // console.log(user._id,product._id,req.body.productId)
 
     const cart_user = await Cart.findOne({"user":req.user.id})
     console.log(cart_user)
@@ -78,7 +78,7 @@ export const showCartItems= async(req,res)=>{
     cartItems[0].items.forEach( item=>{
         console.log("your tem:",item)
     })
-   console.log("lok at u r ",cartItems[0].items)
+  // console.log("lok at u r ",cartItems[0].items)
 
     res.render("showCart.ejs",{cart:cartItems[0].items})
 }
@@ -114,7 +114,7 @@ export const cartUpdate = async(req,res)=>{
      const total=product.product.price*product.quantity
      const grandTotal=  user_cart.items.reduce((sum,item)=>sum+item.product.price*item.quantity,0)
      
-     console.log(total,grandTotal,user_cart.items[findIndexOfproductId])
+   //  console.log(total,grandTotal,user_cart.items[findIndexOfproductId])
 
         
      return res.json({ success: true, cartCount:0, itemQty: user_cart.items[findIndexOfproductId].quantity,total:total,grandTotal:grandTotal

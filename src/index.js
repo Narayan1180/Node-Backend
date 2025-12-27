@@ -67,10 +67,10 @@ app.use("/order",orderRouter)
 
 
 app.get("/", async(req, res) => {
-  //console.log(req.cookies,req.cookies.refreshToken)
+  console.log(req.cookies,req.cookies.refreshToken)
 
   const user =verifyRefreshToken(req.cookies.refreshToken)
-  console.log(user)
+  console.log("user",user)
 
   if(!user){
     return res.redirect("/login")
@@ -82,9 +82,9 @@ app.get("/", async(req, res) => {
     return res.redirect("/login")
   }
   const CookieOption = { httpOnly: true,
-      sameSite: process.env.NODE_ENV==="production"?"strict":"lax",
+      sameSite: process.env.NODE_ENV==="production"?"lax":"lax",
       secure: process.env.NODE_ENV==="production",
-      maxAge: 15 * 24 * 60 * 60 * 1000, // 1 day
+      maxAge: 15*60*1000, // 1 day
     }
   const new_accessToken=accessToken(user.id)
   res.cookie("accessToken",new_accessToken,CookieOption)
