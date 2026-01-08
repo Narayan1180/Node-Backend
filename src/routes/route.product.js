@@ -6,7 +6,7 @@ import { authMiddlware } from "../middlewares/auth.middleware.js";
 const router=express.Router()
 
 
-router.get("/product",ShowAddProduct)
+router.get("/product",authMiddlware,ShowAddProduct)
 router.get("/dashboard",authMiddlware,showDashBoard)
 router.post("/product-create",upload.single("image"),createProduct)
 router.get("/product/filter",authMiddlware,Filterdashboard)

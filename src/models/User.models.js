@@ -5,13 +5,17 @@ import crypto from "crypto";
 const user_schema= new mongoose.Schema({
 
     name:{type:String,required:true,trim:true},
-    email:{type:String,required:true,lowercase:true},
+    email:{type:String,required:true,lowercase:true,unique:true,trim:true},
     password:{type:String,required:true,trim:true},
     refreshToken:{type:String,
         default:""
     },
     tokenVersion:{type:Number,
       default:1,
+    },
+    role:{type:String,
+         enum:['admin','user','seller'],
+         default:'user'
     },
    resetPasswordToken:{type:String},
    resetPasswordExpire:{type:Date}
@@ -27,8 +31,8 @@ user_schema.pre("save", async function () {
 
 
 user_schema.methods.comparePassword = async function (user_password) {
-  console.log("Entered password:", user_password);
-  console.log("Hashed password in DB:", this.password);
+ // console.log("Entered password:", user_password);
+  //console.log("Hashed password in DB:", this.password);
 
   let res=await bcrypt.compare(user_password, this.password);
   return res

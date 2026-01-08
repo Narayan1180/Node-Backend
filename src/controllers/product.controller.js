@@ -6,12 +6,15 @@ import { cloudinaryUploader } from "../utils/cloudinary.util.js";
 import { authMiddlware } from "../middlewares/auth.middleware.js";
 import Cart from "../models/cart.model.js";
 import fs from "fs";
+import ApiError from "../errors/apiError.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 //import redisClient from "../config/redis.js"
 export const ShowAddProduct= async(req,res)=>{
-
+    if (req.user.role!="seller"){
+      throw new ApiError("Access denied",400)
+    }
     return res.sendFile(path.join(__dirname,"../public","product.html"))
 
 }
@@ -21,6 +24,7 @@ export const createProduct= async(req,res)=>{
     const {name,image,price,category,seller,stock}=req.body;
     const filePath=req.file.path
     console.log(req.body,req.file)
+    
     const result= await cloudinaryUploader(filePath)
     console.log(result)
     fs.unlinkSync(filePath);

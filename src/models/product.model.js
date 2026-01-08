@@ -4,6 +4,7 @@ const product_schema= new mongoose.Schema({
     name:{type:String,
         required:true,
     },
+    brand:{type:String,required:true},
     image:{type:String,
         required:true,
     },
@@ -15,7 +16,9 @@ const product_schema= new mongoose.Schema({
         enum:["Electronics","Clothing","Foods","Fashion","Books"]
     },
     seller:{
-        type:String,
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required:true,
     },
     stocks:{type:Number,
         default:0,

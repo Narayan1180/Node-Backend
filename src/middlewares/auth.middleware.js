@@ -5,7 +5,7 @@ export const authMiddlware = async(req,res,next)=>{
     try {
         const access_Token= req.cookies.accessToken
        // console.log("acees_token",access_Token,req.cookies)
-    
+       console.log(req.headers)
         if (!access_Token){
             return res.redirect("/login")
         }
@@ -16,6 +16,7 @@ export const authMiddlware = async(req,res,next)=>{
         req.user.email=user.email;
         req.user.name=user.name
        // console.log(req.user.id,decoded,req.user.email,req.user.name)
+       console.log(decoded)
         next()
         
     } catch (error) {

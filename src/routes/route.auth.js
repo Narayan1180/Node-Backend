@@ -1,14 +1,15 @@
-import { loginController,registerPage,loginPage,registerController,logout,refresh } from "../controllers/register.js";
+import { loginController,registerPage,loginPage,registerController,logout,refresh,googleCallback } from "../controllers/register.js";
 import { forgetPassword,resetPassword,showForgetPassword,showResetPassword } from "../controllers/resetPass.controller.js";
+import catchAsync from "../utils/catchAsync.js";
 import express from "express"
 
 const router=express.Router()
 
 router.get("/login",loginPage)
 router.get("/register",registerPage)
-router.post("/login",loginController)
+router.post("/login",catchAsync(loginController))
 
-router.post("/register",registerController)
+router.post("/register",catchAsync(registerController))
 router.get("/logout",logout)
 router.get("/refresh",refresh)
 router.get("/forget-password",showForgetPassword)
@@ -26,6 +27,33 @@ router.get("/reset-password/:token",showResetPassword)
 
 router.post("/forget-password",forgetPassword)
 router.post("/reset-password/:token",resetPassword)
+
+
+
+import passport from "passport";
+
+
+
+
+// Google login
+router.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
+);
+
+// Google callback
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+  }),
+  googleCallback
+);
+
+
+
 export default router
 
 

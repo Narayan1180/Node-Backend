@@ -1,5 +1,6 @@
 
 import "./config/env.js"; // 👈 MUST be line 1
+import "./config/oauth.js";
 
 import express from "express";
 import mongoose from "mongoose";
@@ -21,12 +22,43 @@ import orderRouter from "./routes/order.route.js"
 import cartRouter from "./routes/cart.route.js";
 import { refreshToken, verifyRefreshToken ,accessToken} from "./utils/utl.loginToken.js";
 import User from "./models/User.models.js";
+import globalErrorHandler from "./middlewares/globalErrorHandler.js";
 //import { connectRedis } from "./config/redis.js";
-
+import helmet from "helmet";
+import morgan from "morgan";
+import passport from "passport";
 const app=express()
 
 import session from "express-session";
 import flash from "connect-flash";
+app.use(morgan("dev"));
+/*
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],                    // fallback
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://checkout.razorpay.com"
+        ],
+        scriptSrcAttr: ["'unsafe-inline'"],       // allows onclick handlers temporarily
+        connectSrc: [
+          "'self'",
+          "https://lumberjack.razorpay.com"
+        ],
+        frameSrc: [
+          "'self'",
+          "https://api.razorpay.com"
+        ],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:"],
+      },
+    },
+  })
+); */
+
 //await connectRedis()
 app.use(
   session({
@@ -36,6 +68,9 @@ app.use(
   })
 );
 
+
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(flash());
 
 // Make flash messages available in all EJS templates
@@ -46,7 +81,6 @@ app.use((req, res, next) => {
 });
 
 //app.use(express.urlencoded({ extended: true }));  // for form POSTs
-
 app.use(express.urlencoded({ extended: true }));
 //app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public")));
@@ -81,7 +115,7 @@ app.get("/", async(req, res) => {
       secure: process.env.NODE_ENV==="production",
       maxAge: 15*60*1000, // 1 day
     }
-  const new_accessToken=accessToken(user.id)
+  const new_accessToken=accessToken(user.id,userExist.role)
   res.cookie("accessToken",new_accessToken,CookieOption)
 
 
@@ -97,10 +131,34 @@ app.use("/",authRouter)
 app.use("/show",productRouter)
 app.use("/cart",cartRouter)
 app.use("/order",orderRouter)
-
+app.use(globalErrorHandler)
 const port=process.env.PORT
 
 mongoose.connect(process.env.MONGO_URL).then(()=>console.log("MongoDb is connected")).catch((err)=>{console.log(err)})
+
+// index.js or app.js
+
+import cron from  'node-cron';
+import {Order}  from "./models/order.model.js";
+
+
+// ... your middlewares and routes
+
+// This cron job will start every time the server starts
+cron.schedule('*/1 * * * *', async () => { 
+  // For testing: runs every 1 minute
+  console.log("running cron job")
+  try {
+    const deleted = await Order.deleteMany({ 
+      status: {$in:['CANCELLED','PENDING']}, 
+      createdAt: { $lt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) } // older than 2 days
+    });
+    console.log(new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) )
+    console.log(`Deleted ${deleted.deletedCount} old pending orders`);
+  } catch (err) {
+    console.error('Cron job error:', err);
+  }
+});
 
 
 

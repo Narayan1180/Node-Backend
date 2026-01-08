@@ -267,7 +267,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const data = await res.json();
-        if (!data.success) return;
+        if (!data.success){ 
+          alert(data.message) 
+          return }
 
         // ✅ update only THIS product
         qtySpan.innerText = data.itemQty;

@@ -1,6 +1,7 @@
 import Product from "../models/product.model.js";
 import User from "../models/User.models.js";
 import Cart from "../models/cart.model.js";
+import ApiError from "../errors/apiError.js";
 
 
 export const addToCart = async(req,res)=>{
@@ -104,6 +105,16 @@ export const cartUpdate = async(req,res)=>{
 
         }
         if (req.body.action==="decrease" && user_cart.items[findIndexOfproductId].quantity>0){
+            if ((user_cart.items[findIndexOfproductId].quantity)===1){
+
+                return res.status(400).json({
+  success: false,
+  message: "Cart item quantity cannot be zero"
+});
+
+                req.flash("error_msg","Cart Item Cannot be Zero")
+                throw new ApiError("Message Cart Items Cannot be Zero ",400)
+            }
             user_cart.items[findIndexOfproductId].quantity-=1
 
         }}

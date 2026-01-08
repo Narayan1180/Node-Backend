@@ -6,10 +6,11 @@ import { fileURLToPath } from "url";
 import bcrypt from "bcryptjs"
 import file_upload from "../models/fileUpload.model.js";
 import Product from "../models/product.model.js";
+import ApiError from "../errors/apiError.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import { accessToken,refreshToken,verifyRefreshToken,verifyAccessToken } from "../utils/utl.loginToken.js"
+import { accessToken,refreshToken,verifyRefreshToken } from "../utils/utl.loginToken.js"
 
 
 export const  registerPage =(req,res)=>{
@@ -35,21 +36,52 @@ export const  loginPage =(req,res)=>{
       maxAge: 15*24*60*60*1000, // 1 day
     }
  
-export const registerController =  async (req,res)=>{
-    try {
+export const registerController =  async (req,res,next)=>{
+
+   const {name ,email,password}=req.body;
+
+   if (!name||!email||!password){
+    throw new ApiError("All fileds Are required",400)
+   }
+
+   if (!validator.isEmail(email)){
+    throw new ApiError("Please Enter valid Email address ",400)
+   }
+
+   const check =  await User.findOne({email})
+
+   if (check){
+    throw new ApiError("User Already Exists",409)
+   }
+
+
+   const user = new User({name,email,password})
+
+  await  user.save()
+
+   
+  req.flash("success_msg","User Registered Successfully.")
+  return res.redirect("/login")
+
+
+
+
+
+  
+   /* try {
         const {name,email,password}=req.body
      //   console.log(name,email,password)
         if (!validator.isEmail(email)){
-            req.flash("error_msg","Please Enter Valid Email Address.")
+            req.flash("error_msg","Please Enter Valid Email Address.");
 
-            return res.status(400).redirect("/register")}
+            throw  new ApiError("Invalid Email Address",400)}
     
         const check = await User.findOne({email})
         console.log(check)
         if (check){
-            req.flash("error_msg","User already registered Please logIn!.")
+            req.flash("error_msg","User already registered Please logIn!.");
 
-            return res.status(400).redirect("/login")}
+            throw new ApiError("User Already Exists",409)}
 
         //const hash_password= await bcrypt.hash(password,10)
 
@@ -58,20 +90,62 @@ export const registerController =  async (req,res)=>{
         await user.save()
         
         req.flash("success_msg","User Registered Successfully.")
-        return res.status(200).redirect("/login")
+        throw new ApiError("User registered",200)
        } 
 
 catch (error) {
+   next(error)
     console.error(error)
     return res.status(500).json({"err":error.message})
 }
-
+*/
 }
 
 
 
 export const loginController = async (req, res) => {
-  try {
+
+  let {email,password}= req.body;
+
+  if (!email||!password){
+
+   // req.flash("error_msg","Email address and password is required.")
+
+    throw new ApiError("Email and Password required",400);
+  }
+
+  email=email.trim();
+  password=password.trim();
+
+  const user = await User.findOne({email});
+
+  if (!user){
+         // req.flash("error_msg","Please Enter Valid Email Address Or Register.")
+
+    throw new ApiError("User doesn,t exist please Enter correct Email address or register",400);
+  }
+
+  const match = await user.comparePassword(password,user.password);
+  if (!match){
+     // req.flash("error_msg","Password Mismatch .")
+
+    throw new ApiError("Password Mismatch",400);
+  }
+
+  const accessTokenValue= await accessToken(user._id,user.role||"user");
+  const refreshTokenValue = await refreshToken(user._id,user.tokenVersion);
+  user.refreshToken=refreshTokenValue;
+
+  await user.save();
+
+  res.cookie("accessToken",accessTokenValue,CookieOption1);
+  res.cookie("refreshToken",refreshTokenValue,CookieOption2);
+
+  req.flash("success_msg","User logged in successfully.")
+  return res.redirect("/show/dashboard");
+
+
+  /*try {
     let { email, password } = req.body;
 
     email = email.trim();
@@ -121,7 +195,7 @@ export const loginController = async (req, res) => {
     /*return res.json({
       accessToken: accessTokenValue,
       message: "Login successful",
-    }); */
+    }); 
 
    //const products= await Product.find({})
    console.log(user.name)
@@ -131,7 +205,7 @@ export const loginController = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
-  }
+  }*/
 };
 
 
@@ -234,8 +308,32 @@ export const logout = async(req,res)=>{
   }
 
   
-
-  
-
-
 }
+
+
+export const googleCallback = async(req, res) => {
+
+  const guser = req.user;
+   console.log(guser)
+   let user= await User.findOne({email:guser.email})
+   if (!user){
+      user = await User.create({
+    name: guser.name,
+    email: guser.email,
+    password: 12345,          // no password
+    //provider: "google",      // optional
+  });
+
+   }
+    const accessTokenValue= await accessToken(user._id,user.role||"user");
+  const refreshTokenValue = await refreshToken(user._id,user.tokenVersion||1);
+  user.refreshToken=refreshTokenValue;
+
+   await user.save();
+
+  res.cookie("accessToken",accessTokenValue,CookieOption1);
+  res.cookie("refreshToken",refreshTokenValue,CookieOption2);
+
+  // User is already authenticated here
+  res.redirect("/show/dashboard");
+};
