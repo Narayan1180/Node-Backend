@@ -7,7 +7,9 @@ passport.use(
     {
       clientID: process.env.G_CLIENT_ID,
       clientSecret: process.env.G_CLIENT_SECRET,
-      callbackURL: "/google/callback",
+      //callbackURL: "/google/callback",
+      callbackURL: process.env.NODE_ENV === "production"? "https://shopapp-rxl1.onrender.com/google/callback": "http://localhost:3000/google/callback"
+
     },
     async (accessToken, refreshToken, profile, done) => {
       const user = {
