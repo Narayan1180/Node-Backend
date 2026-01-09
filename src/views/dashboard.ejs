@@ -22,21 +22,6 @@ body {
 /* =========================
    NAVBAR
 ========================= */
-.navbar {
-  background: linear-gradient(135deg,#0B3D2E);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 28px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-}
-
-/* LEFT SECTION */
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
 
 .logo {
   font-size: 22px;
@@ -63,26 +48,6 @@ body {
 }
 
 /* RIGHT LINKS */
-.nav-links {
-  list-style: none;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #d1d5db;
-  font-size: 14px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.nav-links a:hover {
-  background: rgba(255,255,255,0.1);
-  color: #ffffff;
-}
 
 /* WELCOME BADGE */
 .welcome {
@@ -395,7 +360,126 @@ body {
 .logout:hover {
   background: #9a3412;
 }
+/* =========================
+   NAVBAR (BASE)
+========================= */
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #0B3D2E);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+}
 
+/* LEFT */
+.nav-left {
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #facc15;
+}
+
+/* CENTER */
+.nav-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* SEARCH BAR */
+.search-bar {
+  display: flex;
+  width: 100%;
+  max-width: 650px;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.search-bar select {
+  border: none;
+  padding: 10px;
+  background: #f3f4f6;
+  font-size: 14px;
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-bar button {
+  border: none;
+  background: #facc15;
+  padding: 0 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* RIGHT */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: #e5e7eb;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.logout {
+  background: #7c2d12;
+  color: #fff !important;
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .nav-center {
+    width: 100%;
+  }
+
+  .search-bar {
+    max-width: 100%;
+  }
+
+  .nav-links {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .welcome {
+    width: 100%;
+    text-align: center;
+  }
+}
+@media (max-width: 480px) {
+  .page {
+    padding: 14px;
+  }
+
+  .card img {
+    height: 200px;
+  }
+}
 
 .flash-msg {
   position: fixed;
