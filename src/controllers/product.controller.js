@@ -53,6 +53,7 @@ export const showDashBoard = async(req,res)=>{
   //  if (user){
     // cartCount=user.items.reduce((total,i)=>total+i.quantity,0)
    // }
+   //console.log(products)
     
     return res.render("dashboard.ejs",{products,name:req.user.name})
 }
