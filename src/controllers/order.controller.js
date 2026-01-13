@@ -3,8 +3,11 @@ import User from "../models/User.models.js";
 import Product from "../models/product.model.js";
 import Cart from "../models/cart.model.js";
 import razorpay from "../config/razorpay.config.js";
-
 import { resend,sendOrderPlacedEMail } from "../utils/email.util.js";
+
+import {getChannel} from "../config/RabbitMQ.js"
+
+
 export const  CheckOutPage = async(req,res)=>{
     console.log("hello user u r inside order::")
     const cartItem= await Cart.find({"user":req.user.id}).populate("items.product");
@@ -178,11 +181,32 @@ export const verifyPayment = async (req, res) => {
     await order.save();
 
 
-
+console.log("payment verify...")
 // async (non-blocking)
 
+try {
+  const channel = await getChannel();
+
+    channel.sendToQueue(
+      "notification.email",
+      Buffer.from(
+        JSON.stringify({
+          type: "ORDER_PAID",
+          userId: order.user,
+          orderId: order._id,
+          email:req.user.email,
+        })
+      ),
+      { persistent: true }
+    );
+  
+} catch (error) {
+  console.log("erro rin rabbit Que")
+  
+}/*
+
   sendOrderPlacedEMail(req.user.email, order._id)
-  .catch(err => console.error("Email failed", err));
+  .catch(err => console.error("Email failed", err)); */
 
 
     res.json({ success: true, orderId: order._id });

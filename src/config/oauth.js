@@ -1,7 +1,7 @@
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
 const googleStrategy = GoogleStrategy.Strategy;
-
+console.log(process.env.G_CLIENT_ID,process.env.G_CLIENT_SECRET)
 passport.use(
   new googleStrategy(
     {

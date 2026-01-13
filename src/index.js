@@ -1,8 +1,12 @@
 
+
 import "./config/env.js"; // 👈 MUST be line 1
+
 import "./config/oauth.js";
 
+
 import express from "express";
+
 import mongoose from "mongoose";
 import file_upload from "./models/fileUpload.model.js";
 import path from "path"
@@ -145,7 +149,7 @@ import {Order}  from "./models/order.model.js";
 // ... your middlewares and routes
 
 // This cron job will start every time the server starts
-cron.schedule('*/1 * * * *', async () => { 
+cron.schedule('0 17 * * 1-5', async () => { 
   // For testing: runs every 1 minute
   console.log("running cron job")
   try {
@@ -234,9 +238,19 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   }
 });
 
-// ------------------ Start Server ------------------
 
-app.listen(port,()=>{console.log(`Server is listening to the port ${port}`)})
+import startEmailWorker from "./utils/email.worker.js";
+import { connectRabbit } from "./config/RabbitMQ.js";
+
+await connectRabbit();          // RabbitMQ connection
+startEmailWorker();             // start consuming emails
+
+// ------------------ Start Server ------------------
+import open from 'open';
+app.listen(port,async()=>{console.log(`Server is listening to the port ${port}`)
+  await open(`http://localhost:${port}`);
+}
+  )
 
 
 
